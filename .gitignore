@@ -1,2 +1,3 @@
 *.o
 memsched
+sqlite3.*
