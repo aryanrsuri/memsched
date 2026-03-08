@@ -1,0 +1,16 @@
+memsched
+
+For job scheduling on embedded or low-powered systems
+
+
+* optional persistance to sqlite3 (so not mem-)
+
+A `job` is a request for work. A job can 
+contain N `tasks` which themselves are atomic processes.
+Each task is a sequential step to complete the job. 
+
+A `resource` is something provided by the `node`, or 
+compute executing this work, and the schduler will 
+optimise task runs on these resources to fufill them.
+
+
