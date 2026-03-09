@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <cstdio>
 #include <ctime>
 #include <string>
 #include <vector>
@@ -25,6 +26,7 @@ struct Job {
   std::vector<int> cpu_slots;
   // std::string fingerprint;
   std::time_t started_at;
+  std::time_t allocated_at;
   std::time_t scheduled_at;
   std::time_t running_at;
   std::time_t completed_at;
@@ -33,5 +35,10 @@ struct Job {
   int ram_req;
   int duration;
   int priority;
+
+  void repr() {
+    printf("%llu\t%s\t(%d)\t%d\t%d\t%d\t%lu\n", id, label.c_str(), priority,
+           cpus_req, ram_req, duration, allocated_at);
+  };
 };
 } // namespace sched
