@@ -1,15 +1,16 @@
 #include "../include/resources.hpp"
 #include "../include/job.hpp"
-#include <cstdio>
-#include <iostream>
+#include <chrono>
 
 using namespace std;
 namespace sched {
 Job create_job(const string &label, const string command, int cpus_req,
                int ram_req, int duration = 30, int priority = 40) {
+  const auto now = chrono::system_clock::now();
   return Job{
       .label = label,
       .command = command,
+      .created_at = chrono::system_clock::to_time_t(now),
       .cpus_req = cpus_req,
       .ram_req = ram_req,
       .duration = duration,

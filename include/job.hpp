@@ -1,4 +1,5 @@
 #pragma once
+#include "types.hpp"
 #include <cstdint>
 #include <cstdio>
 #include <ctime>
@@ -25,8 +26,8 @@ struct Job {
   // std::vector<Task> tasks;
   std::vector<int> cpu_slots;
   // std::string fingerprint;
+  std::time_t created_at;
   std::time_t started_at;
-  std::time_t allocated_at;
   std::time_t scheduled_at;
   std::time_t running_at;
   std::time_t completed_at;
@@ -35,10 +36,13 @@ struct Job {
   int ram_req;
   int duration;
   int priority;
+  Status status = Status::WAITING;
 
-  void repr() {
-    printf("%llu\t%s\t(%d)\t%d\t%d\t%d\t%lu\n", id, label.c_str(), priority,
-           cpus_req, ram_req, duration, allocated_at);
-  };
+  void repr() const {
+    printf("%-8llu %-8d %-20s %-4d %-6d %-6d\n", id, priority, label.c_str(),
+           cpus_req, ram_req, duration);
+  }
+
+  int eff() const { return priority * (created_at / 10000); }
 };
 } // namespace sched

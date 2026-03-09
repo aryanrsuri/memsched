@@ -2,7 +2,6 @@
 
 #include "job.hpp"
 #include "resources.hpp"
-#include <deque>
 #include <mutex>
 #include <string>
 
@@ -10,7 +9,7 @@ namespace sched {
 struct Scheduler {
   Resources resources;
   int next_job_id = 1;
-  std::deque<Job> waiting;
+  std::vector<Job> waiting;
   std::vector<Job> running;
   std::vector<Job> finished;
   std::mutex mu;
@@ -54,4 +53,10 @@ bool dispatch_one(Scheduler &s);
  * One worker loop
  */
 void tick(Scheduler &s);
+
+/**
+ * Render the job queue
+ */
+void squeue(Scheduler &s);
+
 }; // namespace sched

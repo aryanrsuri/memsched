@@ -20,7 +20,8 @@ int main(void) {
   snprintf(buffer, size(buffer), "pass_scan_through");
   Job job = create_job(buffer, "echo 3", 3, 1024, 30, 100);
   submit(s, job);
-  job.repr();
+
+  squeue(s);
 
   return 0;
 }
