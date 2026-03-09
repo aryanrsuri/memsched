@@ -1,6 +1,6 @@
 #include "../include/resources.hpp"
 #include "../include/job.hpp"
-#include <mutex>
+#include <cstdio>
 
 using namespace std;
 namespace sched {
@@ -29,15 +29,14 @@ bool allocate(Resources &r, Job &j) {
   r.total_ram_mb -= j.ram_req;
   r.used_ram_mb += j.ram_req;
   int i = 0;
-  while (j.cpu_slots.size() <= j.cpus_req) {
+  while (j.cpu_slots.size() < j.cpus_req) {
     if (r.cpus[i] == 1) {
-      j.cpu_slots.push_back(i);
       r.cpus.flip(i);
+      j.cpu_slots.push_back(i);
     };
     ++i;
   };
 
-  // FIXME: Should never be hit?
   if (j.cpu_slots.size() != j.cpus_req)
     return false;
 
@@ -47,9 +46,10 @@ bool allocate(Resources &r, Job &j) {
 bool release(Resources &r, Job &j) {
   r.used_ram_mb -= j.ram_req;
   r.total_ram_mb += j.ram_req;
-  for (auto iter = j.cpu_slots.begin(); iter != j.cpu_slots.end(); ++iter) {
-    r.cpus.flip(*iter);
-  }
+
+  for (int i : j.cpu_slots) {
+    r.cpus.flip(i);
+  };
 
   return true;
 }

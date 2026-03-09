@@ -1,19 +1,37 @@
 #include "include/scheduler.hpp"
+#include <cmath>
 #include <cstdio>
-#include <iostream>
 using namespace sched;
 using namespace std;
 int main(void) {
-  Scheduler s{.resources = {.total_ram_mb = 160000, .used_ram_mb = 0}};
-  Job job = create_job("job-001", "echo 1", 10, 1024, 30, 100);
+  Scheduler s{.resources = {.total_ram_mb = 16000, .used_ram_mb = 0}};
+  for (auto i = 1; i < 10; ++i) {
+    char buffer[100];
+    sprintf(buffer, "job-00%d", i);
+    Job job = create_job(buffer, "echo 1", 10, 1024 * i, 30, 100);
+    if (!allocate(s.resources, job)) {
+      printf("Could not allocate (%d CPUS, %d MB RAM) for job=%s \n\tScheduler "
+             "view: %s "
+             "(%d/%d "
+             "MB RAM left)\n",
+             job.cpus_req, job.ram_req, job.label.c_str(),
+             s.resources.cpus.to_string().c_str(), s.resources.total_ram_mb,
+             s.resources.total_ram_mb + s.resources.used_ram_mb);
 
-  auto t = s.resources.cpus << 10;
-  cout << t << '\n';
-  printf("Can we fit %s (%d CPUS , %d MB RAM) given the resources of %lu CPUS "
-         "and %d MB "
-         "RAM? %d\n",
-         job.label.c_str(), job.cpus_req, job.ram_req, s.resources.cpus.count(),
-         s.resources.total_ram_mb, fit(s.resources, job));
+      return 1;
+    }
+    printf("Allocated (%lu CPUS, %d MB RAM) for job=%s \n\tScheduler view: %s "
+           "(%d/%d "
+           "MB RAM left)\n",
+           job.cpu_slots.size(), job.ram_req, job.label.c_str(),
+           s.resources.cpus.to_string().c_str(), s.resources.total_ram_mb,
+           s.resources.total_ram_mb + s.resources.used_ram_mb);
+    printf("\tCPU SLOTS=");
+    for (auto v : job.cpu_slots) {
+      printf("%d ", v);
+    }
+    printf("\n");
+  }
 
   return 0;
 }
