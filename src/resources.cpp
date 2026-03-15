@@ -30,7 +30,7 @@ bool allocate(Resources &r, Job &j) {
   }
   r.used_ram_mb += j.ram_req;
   int i = 0;
-  while (j.cpu_slots.size() < j.cpus_req) {
+  while (j.cpu_slots.size() < static_cast<size_t>(j.cpus_req)) {
     if (r.cpus[i] == 1) {
       r.cpus.flip(i);
       j.cpu_slots.push_back(i);
@@ -38,20 +38,19 @@ bool allocate(Resources &r, Job &j) {
     ++i;
   };
 
-  if (j.cpu_slots.size() != j.cpus_req)
+  if (j.cpu_slots.size() != static_cast<size_t>(j.cpus_req))
     return false;
 
   return true;
 }
 
-bool release(Resources &r, Job &j) {
+void release(Resources &r, Job &j) {
   r.used_ram_mb -= j.ram_req;
 
   for (int i : j.cpu_slots) {
     r.cpus.flip(i);
   };
-
-  return true;
+  j.cpu_slots.clear();
 }
 
 } // namespace sched

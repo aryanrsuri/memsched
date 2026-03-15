@@ -39,8 +39,9 @@ struct Job {
   Status status = Status::WAITING;
 
   void repr() const {
-    printf("%-8llu %-8d %-20s %-4d %-6d %-6d\n", id, priority, label.c_str(),
-           cpus_req, ram_req, duration);
+    printf("%-8llu %-10s %-8d %-20s %-4d %-6d %-6d %-8lu\n", id,
+           m.at(status).c_str(), priority, label.c_str(), cpus_req, ram_req,
+           duration, started_at);
   }
 
   int eff() const { return priority * (created_at / 10000); }
